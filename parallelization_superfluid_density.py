@@ -36,7 +36,7 @@ phi_x_values = [0]
 phi_y_values = [0]
 q_x_values = [0]
 q_y_values = [0]
-q_B_x_values = np.array([0.01*np.pi])
+q_B_x_values = np.array([0.02*np.pi])
 q_B_y_values = [0]
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
@@ -44,7 +44,7 @@ k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
 n_calls = 15
 n_initial_points = 5
 # Define the search space
-search_space = [(-0.02 * np.pi, 0.02 * np.pi)]  
+search_space = [(-0.04 * np.pi, 0.04 * np.pi)]  
 n_cores = 19
 points = 1* n_cores
 
@@ -106,7 +106,7 @@ def integrate_q_B(q_B):
     return q_eq, superfluid_density_xx, superfluid_density_xx_0, superfluid_density_yy, superfluid_density_yy_0, superfluid_density_xy, superfluid_density_xy_0
 
 if __name__ == "__main__":
-    q_B_values = np.linspace(0.*np.pi, 0.01*np.pi, points)
+    q_B_values = np.linspace(0.*np.pi, 0.02*np.pi, points)
     B_direction = f"{theta:.2}"
     integrate = integrate_q_B
     with multiprocessing.Pool(n_cores) as pool:

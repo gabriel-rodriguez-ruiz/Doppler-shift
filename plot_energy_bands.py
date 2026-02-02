@@ -9,13 +9,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pauli_matrices import tau_0, sigma_0, tau_z, sigma_x, sigma_y, tau_y, tau_x
 import scipy
-from functions import get_energy, get_energy_in_polars
+from functions import get_energy
     
 #%% Parameters
 k_y = [0.*np.pi]
 phi_x = [0.*np.pi]
 phi_y = [0]
-q_B_x = np.array([0.006*np.pi])
+q_B_x = np.array([0.015*np.pi])
 q_B_y = [0.]
 q_x = [0]
 q_y = [0]
