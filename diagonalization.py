@@ -37,8 +37,8 @@ def get_Hamiltonian_in_polars(k, theta, B_x, B_y, q_B_x, q_B_y, mu, Delta, gamma
     """Return the Hamiltonian for a given k."""
     k_x = k * np.cos(theta)
     k_y = k * np.sin(theta)
-    chi_k_plus = gamma * ( (k_x - q_B_x + q_x + phi_x)**2 + (k_y - q_B_y + q_y + phi_y)**2) - mu
-    chi_k_minus = gamma * ( (-k_x + phi_x)**2 + (-k_y + phi_y)**2 ) - mu
+    chi_k_plus = gamma * ( (k_x + q_B_x + q_x + phi_x)**2 + (k_y + q_B_y + q_y + phi_y)**2) - mu
+    chi_k_minus = gamma * ( (-k_x + q_B_x + q_x + phi_x)**2 + (-k_y + q_B_y + q_y + phi_y)**2 ) - mu
     return 1/2 * ( chi_k_plus * np.kron( ( tau_0 + tau_z )/2, sigma_0)
                    - chi_k_minus * np.kron( ( tau_0 - tau_z )/2, sigma_0)
                    - B_y * np.kron(tau_0, sigma_y)
@@ -50,12 +50,13 @@ def get_Hamiltonian_in_polars(k, theta, B_x, B_y, q_B_x, q_B_y, mu, Delta, gamma
                    - Lambda * (-k_y + phi_y) * np.kron( ( tau_0 - tau_z )/2, sigma_x )
                  )
 
-def get_Energies_in_polars(k_values, theta_values, mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y):
+def get_Energies_in_polars(k_values, theta_values, B_x, B_y, q_B_x, q_B_y, mu, Delta, gamma, Lambda,
+                           q_x, q_y, phi_x, phi_y):
     """Return the energies of the Hamiltonian at a given k."""
     E = np.zeros((len(k_values), len(theta_values), 4))
     for i, k in enumerate(k_values):
         for j, theta in enumerate(theta_values):
-            H = get_Hamiltonian_in_polars(k, theta, mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)
+            H = get_Hamiltonian_in_polars(k, theta, B_x, B_y, q_B_x, q_B_y, mu, Delta, phi_x, gamma, Lambda, B_x, phi_y)
             E[i, j, :] = np.linalg.eigvalsh(H)
     return E
 
