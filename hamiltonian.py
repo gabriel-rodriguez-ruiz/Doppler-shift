@@ -34,22 +34,20 @@ def get_Hamiltonian(k_x, k_y, phi_x, phi_y, w_s, w_S, mu_s, mu_S, Delta_s, Delta
             
     """
     H_s = (
-        -2*w_s*((np.cos(k_x)*np.cos(phi_x+2*q_B_x+q_x) + np.cos(k_y)*np.cos(phi_y+2*q_B_y+q_y))
-               * np.kron(tau_z, sigma_0)
-               - (np.sin(k_x)*np.sin(phi_x+2*q_B_x+q_x) + np.sin(k_y)*np.sin(phi_y+2*q_B_y+q_y))
-               * np.kron(tau_0, sigma_0)) - mu_s * np.kron(tau_z, sigma_0)
-        + 2*Lambda*(np.sin(k_x)*np.cos(phi_x+2*q_B_x+q_x) * np.kron(tau_z, sigma_y)
-                    + np.cos(k_x)*np.sin(phi_x+2*q_B_x+q_x) * np.kron(tau_0, sigma_y)
-                    - np.sin(k_y)*np.cos(phi_y+2*q_B_y+q_y) * np.kron(tau_z, sigma_x)
-                    - np.cos(k_y)*np.sin(phi_y+2*q_B_y+q_y) * np.kron(tau_0, sigma_x))
+        -2*w_s*((np.cos(k_x + q_B_x + q_x + phi_x) + np.cos(k_y + q_B_y + q_y + phi_y))
+               * np.kron((tau_0+tau_z)/2, sigma_0)
+               - (np.cos(-k_x + q_B_x + q_x + phi_x) + np.cos(-k_y + q_B_y + q_y + phi_y))
+                      * np.kron((tau_0-tau_z)/2, sigma_0) )
+                      - mu_s * np.kron(tau_z, sigma_0)
         - B_x*np.kron(tau_0, sigma_x) - B_y*np.kron(tau_0, sigma_y)
          + Delta_s*np.kron(tau_x, sigma_0)
             ) * 1/2
     H_S = (
-        -2*w_S*((np.cos(k_x)*np.cos(phi_x+q_x) + np.cos(k_y)*np.cos(phi_y+q_y))   #without q in the superconductor
-               * np.kron(tau_z, sigma_0)
-               - (np.sin(k_x)*np.sin(phi_x+q_x) + np.sin(k_y)*np.sin(phi_y+q_y))      # added minus sign because of flux plaquette
-               * np.kron(tau_0, sigma_0)) - mu_S * np.kron(tau_z, sigma_0)
+        -2*w_S*((np.cos(k_x + q_x + phi_x) + np.cos(k_y + q_y + phi_y))
+               * np.kron((tau_0+tau_z)/2, sigma_0)
+               - (np.cos(-k_x + q_x + phi_x) + np.cos(-k_y + q_y + phi_y))
+                      * np.kron((tau_0-tau_z)/2, sigma_0) )
+        - mu_S * np.kron(tau_z, sigma_0)
         - B_x_S*np.kron(tau_0, sigma_x) - B_y_S*np.kron(tau_0, sigma_y)
         + Delta_S*np.kron(tau_x, sigma_0)
             ) * 1/2
