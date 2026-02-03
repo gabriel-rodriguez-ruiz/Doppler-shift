@@ -31,16 +31,17 @@ cut_off = 1.1*k_F # 1.1 k_F
 theta = np.pi/2 #np.pi/2   # float
 B_x = 0
 B_y = 0
-N = 514  #514   #300
-n_cores = 16
+N = 60  #514   #300
+n_cores = 8
 points = 1* n_cores
-N_polifit = 2  # 4
-C = 0
+n_calls = 15
+n_initial_points = 5
+h = 1e-4
 
 parameters = {"gamma": gamma, "points": points, "k_F": k_F,
               "mu": mu, "Delta": Delta,
               "Lambda": Lambda, "N": N,
-              "cut_off": cut_off, "C": C
+              "cut_off": cut_off
               }
 
 # Define the search space
@@ -52,7 +53,7 @@ def function(q, q_B_x, q_B_y):
     integral, low_integral, high_integral = integrate_Romberg(N, mu, B_x, B_y, q_B_x, q_B_y,
                                                               Delta, gamma, Lambda, k_F, cut_off,
                                                               q_x, q_y, phi_x=0, phi_y=0)
-    energy_phi = np.sum(integral) + np.sum(low_integral) + np.sum(high_integral) + np.pi/2 * cut_off**2 * (2*gamma*(q_B_x**2 + q_B_y**2 + q_x**2 + q_y**2 + phi_x**2 + phi_y**2) - 2*mu + gamma*cut_off**2)
+    energy_phi = np.sum(integral) + np.sum(low_integral) + np.sum(high_integral) + np.pi/2 * cut_off**2 * (2*gamma*(q_B_x**2 + q_B_y**2 + q_x**2 + q_y**2 ) - 2*mu + gamma*cut_off**2)
     return energy_phi
 
 def E_0(q_B_x, q_B_y, q_x, q_y, phi_x, phi_y):
@@ -75,7 +76,7 @@ def get_minima(search_space, q_B_x, q_B_y):
         acq_func='LCB',  #Lower Confidence Bound (more exploratory) #"EI"  Expected Improvement
         noise=0.0,
         initial_point_generator="lhs",
-        x0=[[-q_B_x_values[0]], [0.], [q_B_x_values[0]]]
+        x0=[[-q_B_values[0]], [0.], [q_B_values[0]]]
     )
     return result.x[0]
 
@@ -86,12 +87,12 @@ def integrate_q_B(q_B):
     q_eq = get_minima(search_space, q_B_x, q_B_y)
     phi_x_values = np.array([-h, 0, h]) + q_eq * np.cos(theta + np.pi/2)
     phi_y_values = np.array([-h, 0, h]) + q_eq * np.sin(theta + np.pi/2)
-    superfluid_density_xx = 1/(L_x*L_y) * (E_0(phi_x_values[2], phi_y_values[1], q_B_x, q_B_y) - 2*E_0(phi_x_values[1], phi_y_values[1], q_B_x, q_B_y) + E_0(phi_x_values[0], phi_y_values[1], q_B_x, q_B_y))/h**2
-    superfluid_density_xx_0 = 1/(L_x*L_y) * (E_0(h, 0, q_B_x, q_B_y) - 2*E_0(0, 0, q_B_x, q_B_y) + E_0(-h, 0, q_B_x, q_B_y))/h**2
-    superfluid_density_yy = 1/(L_x*L_y) * (E_0(phi_x_values[1], phi_y_values[2], q_B_x, q_B_y) - 2*E_0(phi_x_values[1], phi_y_values[1], q_B_x, q_B_y) + E_0(phi_x_values[1], phi_y_values[0], q_B_x, q_B_y))/h**2
-    superfluid_density_yy_0 = 1/(L_x*L_y) * (E_0(0, h, q_B_x, q_B_y) - 2*E_0(0, 0, q_B_x, q_B_y) + E_0(0, -h, q_B_x, q_B_y))/h**2
-    superfluid_density_xy = 1/(L_x*L_y) * (E_0(phi_x_values[2], phi_y_values[2], q_B_x, q_B_y) - E_0(phi_x_values[2], phi_y_values[0], q_B_x, q_B_y) - E_0(phi_x_values[0], phi_y_values[2], q_B_x, q_B_y) + E_0(phi_x_values[0], phi_y_values[0], q_B_x, q_B_y))/(4*h**2)
-    superfluid_density_xy_0 = 1/(L_x*L_y) * (E_0(h, h, q_B_x, q_B_y) - E_0(h, -h, q_B_x, q_B_y) - E_0(-h, h, q_B_x, q_B_y) + E_0(-h, -h, q_B_x, q_B_y))/(4*h**2)
+    superfluid_density_xx = (E_0(phi_x_values[2], phi_y_values[1], q_B_x, q_B_y) - 2*E_0(phi_x_values[1], phi_y_values[1], q_B_x, q_B_y) + E_0(phi_x_values[0], phi_y_values[1], q_B_x, q_B_y))/h**2
+    superfluid_density_xx_0 = (E_0(h, 0, q_B_x, q_B_y) - 2*E_0(0, 0, q_B_x, q_B_y) + E_0(-h, 0, q_B_x, q_B_y))/h**2
+    superfluid_density_yy = (E_0(phi_x_values[1], phi_y_values[2], q_B_x, q_B_y) - 2*E_0(phi_x_values[1], phi_y_values[1], q_B_x, q_B_y) + E_0(phi_x_values[1], phi_y_values[0], q_B_x, q_B_y))/h**2
+    superfluid_density_yy_0 = (E_0(0, h, q_B_x, q_B_y) - 2*E_0(0, 0, q_B_x, q_B_y) + E_0(0, -h, q_B_x, q_B_y))/h**2
+    superfluid_density_xy = (E_0(phi_x_values[2], phi_y_values[2], q_B_x, q_B_y) - E_0(phi_x_values[2], phi_y_values[0], q_B_x, q_B_y) - E_0(phi_x_values[0], phi_y_values[2], q_B_x, q_B_y) + E_0(phi_x_values[0], phi_y_values[0], q_B_x, q_B_y))/(4*h**2)
+    superfluid_density_xy_0 = (E_0(h, h, q_B_x, q_B_y) - E_0(h, -h, q_B_x, q_B_y) - E_0(-h, h, q_B_x, q_B_y) + E_0(-h, -h, q_B_x, q_B_y))/(4*h**2)
     return q_eq, superfluid_density_xx, superfluid_density_xx_0, superfluid_density_yy, superfluid_density_yy_0, superfluid_density_xy, superfluid_density_xy_0
 
 if __name__ == "__main__":
@@ -108,7 +109,7 @@ if __name__ == "__main__":
         superfluid_density_xy = np.array(superfluid_density_xy)
         superfluid_density_xy_0 = np.array(superfluid_density_xy_0)
         data_folder = Path("Data/")
-        name = f"superfluid_density_B_in_{B_direction}_({np.round(np.min(q_B_values/np.pi),3)}-{np.round(np.max(q_B_values/np.pi),3)})_phi_x_in_({np.round(np.min(phi_x_values), 3)}-{np.round(np.max(phi_x_values),3)})_Delta_S={Delta_S}_Delta_s={Delta_s}_lambda={np.round(Lambda, 2)}_points={points}_points={points}_N={L_x}_w_S={w_S}.npz"
+        name = f"superfluid_density_q_B_in({min(q_B_values)},{max(q_B_values)}).npz"
         file_to_open = data_folder / name
         np.savez(file_to_open,
                  superfluid_density_xx = superfluid_density_xx,
