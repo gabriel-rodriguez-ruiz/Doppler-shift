@@ -57,3 +57,11 @@ def get_Hamiltonian(k_x, k_y, phi_x, phi_y, w_s, w_S, mu_s, mu_S, Delta_s, Delta
             [H_w_1.conj().T, H_S]
         ])
     return H
+
+def get_Hamiltonian_in_polars(k, theta, phi_x, phi_y, w_s, w_S, mu_s, mu_S, Delta_s, Delta_S, B_x, B_y, B_x_S, B_y_S,
+                              Lambda, w_1, q_B_x, q_B_y, q_x, q_y):
+    k_x = k * np.cos(theta)
+    k_y = k * np.sin(theta)
+    H = get_Hamiltonian(k_x, k_y, phi_x, phi_y, w_s, w_S, mu_s, mu_S, Delta_s, Delta_S, B_x, B_y, B_x_S, B_y_S,
+                        Lambda, w_1, q_B_x, q_B_y, q_x, q_y)
+    return H

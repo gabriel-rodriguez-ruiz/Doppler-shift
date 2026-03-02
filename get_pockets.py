@@ -387,7 +387,11 @@ def integrate_Romberg(N, mu, B_x, B_y, q_B_x, q_B_y, Delta, gamma, Lambda, k_F, 
         r_min = 0.99*k_F
         r_max = 1.012*k_F
         for i in range(2):
-            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], mu, q_B_y, Delta, q_x, gamma, Lambda, q_B_x, q_y)[0][0][i]
+            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                           q_B_x, q_B_y,
+                                           mu, Delta, gamma, Lambda,
+                                           q_x, q_y,
+                                           phi_x, phi_y)[0][0][i]
             integral[i], c = scipy.integrate.dblquad(f, 0, 2*np.pi, 0, cut_off) 
         low_integral = 0
         high_integral = 0
@@ -403,7 +407,11 @@ def integrate_Romberg(N, mu, B_x, B_y, q_B_x, q_B_y, Delta, gamma, Lambda, k_F, 
         for i in range(4):
             for j, r in enumerate(radius_values):
                 for k, theta in enumerate(theta_values):
-                    E = r * get_Energies_in_polars([r], [theta], mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)[0][0][i]
+                    E = r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                                   q_B_x, q_B_y,
+                                                   mu, Delta, gamma, Lambda,
+                                                   q_x, q_y,
+                                                   phi_x, phi_y)[0][0][i]
                     if E <= 0:
                         Z[j, k] = E
                     else:
@@ -413,14 +421,22 @@ def integrate_Romberg(N, mu, B_x, B_y, q_B_x, q_B_y, Delta, gamma, Lambda, k_F, 
         low_integral = np.zeros(4)
         
         for i in range(2):
-            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)[0][0][i]
+            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                           q_B_x, q_B_y,
+                                           mu, Delta, gamma, Lambda,
+                                           q_x, q_y,
+                                           phi_x, phi_y)[0][0][i]
             low_integral[i], c = scipy.integrate.dblquad(f, 0, 2*np.pi, 0, r_min) 
     
         
         high_integral = np.zeros(4)
         
         for i in range(2):
-            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)[0][0][i]
+            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                           q_B_x, q_B_y,
+                                           mu, Delta, gamma, Lambda,
+                                           q_x, q_y,
+                                           phi_x, phi_y)[0][0][i]
             high_integral[i], abserr = scipy.integrate.dblquad(f, 0, 2*np.pi, r_max, cut_off) 
 
     else:   # two pairs of pockets
@@ -437,7 +453,11 @@ def integrate_Romberg(N, mu, B_x, B_y, q_B_x, q_B_y, Delta, gamma, Lambda, k_F, 
         for i in range(4):
             for j, r in enumerate(radius_values):
                 for k, theta in enumerate(theta_values):
-                    E = r * get_Energies_in_polars([r], [theta], mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)[0][0][i]
+                    E = r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                                   q_B_x, q_B_y,
+                                                   mu, Delta, gamma, Lambda,
+                                                   q_x, q_y,
+                                                   phi_x, phi_y)[0][0][i]
                     if E <= 0:
                         Z[j, k] = E
                     else:
@@ -451,7 +471,11 @@ def integrate_Romberg(N, mu, B_x, B_y, q_B_x, q_B_y, Delta, gamma, Lambda, k_F, 
         for i in range(4):
             for j, r in enumerate(radius_values):
                 for k, theta in enumerate(theta_values):
-                    E = r * get_Energies_in_polars([r], [theta], mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)[0][0][i]
+                    E = r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                                   q_B_x, q_B_y,
+                                                   mu, Delta, gamma, Lambda,
+                                                   q_x, q_y,
+                                                   phi_x, phi_y)[0][0][i]
                     if E <= 0:
                         Z[j, k] = E
                     else:
@@ -461,18 +485,30 @@ def integrate_Romberg(N, mu, B_x, B_y, q_B_x, q_B_y, Delta, gamma, Lambda, k_F, 
         low_integral = np.zeros(4)
         
         for i in range(2):
-            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)[0][0][i]
+            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                           q_B_x, q_B_y,
+                                           mu, Delta, gamma, Lambda,
+                                           q_x, q_y,
+                                           phi_x, phi_y)[0][0][i]
             low_integral[i], c = scipy.integrate.dblquad(f, 0, 2*np.pi, 0, r_min_1)
         
         for i in range(2):
-            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)[0][0][i]
+            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                           q_B_x, q_B_y,
+                                           mu, Delta, gamma, Lambda,
+                                           q_x, q_y,
+                                           phi_x, phi_y)[0][0][i]
             result, c = scipy.integrate.dblquad(f, 0, 2*np.pi, r_max_1, r_min_2) 
             low_integral[i] += result
     
         high_integral = np.zeros(4)
         
         for i in range(2):
-            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], mu, B_y, Delta, phi_x, gamma, Lambda, B_x, phi_y)[0][0][i]
+            f = lambda r, theta: r * get_Energies_in_polars([r], [theta], B_x, B_y,
+                                           q_B_x, q_B_y,
+                                           mu, Delta, gamma, Lambda,
+                                           q_x, q_y,
+                                           phi_x, phi_y)[0][0][i]
             high_integral[i], abserr = scipy.integrate.dblquad(f, 0, 2*np.pi, r_max_2, cut_off) 
         
     return integral, low_integral, high_integral

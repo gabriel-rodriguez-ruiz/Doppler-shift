@@ -12,7 +12,7 @@ from pauli_matrices import tau_0, sigma_0, tau_z, sigma_x, sigma_y, tau_y, tau_x
 import scipy
 from functions import get_fundamental_energy
 
-L_x = 100
+L_x = 300
 L_y = L_x
 w_s = 10   #10
 w_S = w_s  #10/3
@@ -34,13 +34,13 @@ phi_x_values = [0]
 phi_y_values = [0]
 q_x_values = [0]
 q_y_values = [0]
-q_B_x_values = [0.02*np.pi]
+q_B_x_values = [0.0*np.pi]
 q_B_y_values = [0]
 h = 1e-4
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
-n_cores = 19    # odd to include 0
-points = 1*n_cores
+n_cores = 8    # odd to include 0
+points = 3*n_cores
 
 
 params = {"L_x": L_x, "L_y": L_y, "w_s": w_s, "w_S": w_S,

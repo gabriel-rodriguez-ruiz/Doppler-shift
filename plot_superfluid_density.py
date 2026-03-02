@@ -16,12 +16,12 @@ plt.rcParams.update({
 
 data_folder = Path(r"./Data")
 
-file_to_open = data_folder / "superfluid_density_B_in_1.6_(0.0-0.02)_phi_x_in_(0-0)_Delta_S=0.2_Delta_s=0_lambda=0.0_points=19_points=19_N=100_w_S=10.npz"
+file_to_open = data_folder / "superfluid_density_B_in_1.6_(0.005-0.008)_phi_x_in_(0-0)_Delta_S=0.2_Delta_s=0_lambda=0.0_points=19_points=19_N=300_w_S=10.npz"
 
 
 Data = np.load(file_to_open)
 q_B_values = Data["q_B_values"]
-Delta_S = Data["Delta_S"]
+# Delta_0 = Data["Delta_0"]
 Lambda = Data["Lambda"]
 q_eq = Data["q_eq"]
 
@@ -45,13 +45,12 @@ axs[0].plot(q_B_values/np.pi, superfluid_density_xx, "o")
 axs[0].legend(prop={'size': 4})
 axs[0].set_xlabel(r"$q_B/\pi$")
 axs[0].set_ylabel(r"$D_s$")
-axs[0].set_title(r"$\lambda/\Delta_S=$" + f"{Lambda/Delta_S}")
 
 # axs[1].plot(q_B_values/np.pi, q_eq/np.pi, "o")
-axs[1].plot(q_B_values/np.pi, (2*q_eq + q_B_values)/np.pi, "o")
+axs[1].plot(q_B_values/np.pi, (q_eq+q_B_values)/np.pi, "o")
 
 axs[1].set_xlabel(r"$q_B/\pi$")
 
-axs[1].set_ylabel(r"$(2q_{eq} + q_B)/\pi$")
+axs[1].set_ylabel(r"$(q_{eq} + q_B)/\pi$")
 
 plt.tight_layout()

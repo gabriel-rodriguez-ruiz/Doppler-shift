@@ -9,66 +9,62 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pauli_matrices import tau_0, sigma_0, tau_z, sigma_x, sigma_y, tau_y, tau_x
 import scipy
-from functions import get_energy
+from diagonalization import get_Energies_in_polars
     
 #%% Parameters
-k_y = [0.*np.pi]
-phi_x = [0.*np.pi]
-phi_y = [0]
-q_B_x = np.array([0.015*np.pi])
-q_B_y = [0.]
-q_x = [0]
-q_y = [0]
-w_s = 10   #10
-w_S = w_s #w_s/3  #20
-Delta_s = 0   #0
-Delta_S = 0.2
-# E_0 = 25.3333 #25.33  #25.3846
-mu_s = -3.8*w_s #-3.8*w_s  #-38
-mu_S =  w_S/w_s * mu_s  #-38 + E_0 #-38 + E_0
-theta = np.pi/2 #np.pi/2
-B = 0*Delta_S  #0.8*Delta_S #0 * Delta_S    #2 * Delta_S
-B_x = B * np.cos(theta) 
-B_y = B * np.sin(theta)
-g = 0 #1/5
-B_x_S =  g * B * np.cos(theta) 
-B_y_S =  g * B * np.sin(theta) 
-Lambda = 0  #0.5  #0.5   #0.5
-w_1 = [0.25]  # 0.25
+c = 3e18 # nm/s  #3e9 # m/s
+m_e =  5.1e8 / c**2 # meV s²/m²
+m = 0.403 * m_e # meV s²/m²
+hbar = 6.58e-13 # meV s
+gamma = hbar**2 / (2*m) # meV (nm)²
+E_F = 50.6 # meV
+k_F = np.sqrt(E_F / gamma ) # 1/nm
+
+Delta = 0.08   #  meV
+mu = 50.6   # 623 Delta #50.6  #  meV
+# gamma = 9479 # meV (nm)²
+Lambda = 0#8.76 #8*Delta # meV*nm    # 8 * Delta  #0.644 meV 
+
+cut_off = 1.1*k_F # 1.1 k_F
+
+theta = -np.pi/2 #np.pi/2   # float
+B_x = 0
+B_y = 0
+N = 150  #514   #300
+n_cores = 8
+points = 1* n_cores
+n_calls = 15
+n_initial_points = 5
+h = 1e-4
+
+q_B_x = 0
+q_B_y = 0.001
+q_x = 0
+q_y = 0
+phi_x = 0
+phi_y = 0
+parameters = {"gamma": gamma, "points": points, "k_F": k_F,
+              "mu": mu, "Delta": Delta,
+              "Lambda": Lambda, "N": N,
+              "cut_off": cut_off
+              }
 
 #%% Plot energy bands
 
 fig, ax = plt.subplots()
-for w in w_1:
-    for i in range(8):
-        L_x = 1000
-        k_x = np.pi*np.arange(-L_x, L_x)/L_x
-        Energy = get_energy(k_x, k_y, phi_x, phi_y, w_s, w_S,
-                            mu_s, mu_S, Delta_s, Delta_S, B_x,
-                            B_y, B_x_S, B_y_S, Lambda, w, q_B_x, q_B_y,
-                            q_x, q_y)
-        ax.plot(k_x/np.pi, Energy[:, 0, 0, 0, 0, 0, 0, 0, i], label=f"{w}")
+L_x = 1000
+k_x = np.pi*np.linspace(0.02, 0.03, L_x)
+Energy = get_Energies_in_polars(k_x, [theta], B_x, B_y,
+                               q_B_x, q_B_y,
+                               mu, Delta, gamma, Lambda,
+                               q_x, q_y,
+                               phi_x, phi_y)
 
+ax.plot(k_x, Energy[:, 0, 0])
+ax.plot(k_x, Energy[:, 0, 1])
+ax.plot(k_x, Energy[:, 0, 2])
+ax.plot(k_x, Energy[:, 0, 3])
 
-fig.suptitle(r"$\lambda=$" + f"{np.round(Lambda,2)}"
-             +r"; $\Delta=$" + f"{Delta_S}"
-             + r"; $\mu_s=$"+f"{np.round(mu_s, 3)}"
-             + r"; $\mu_S=$"+f"{np.round(mu_S, 3)}"
-             + r"; $w_s=$"+f"{np.round(w_s, 3)};"
-             + "\n"
-             + r"$w_S=$"+ f"{np.round(w_S, 3)}"
-             +r"; $B_x=$"+f"{np.round(B_x, 2)}"
-             +r"; $B_y=$"+f"{np.round(B_y, 2)}"
-             +r"; $w_1=$" + f"{w_1}" + r"; $q_x=$" + f"{q_x}"
-             + r"; $q_B/\pi=$" + f"{q_B_x/np.pi}")
-plt.tight_layout()
-ax.set_xlabel(r"$k_x/\pi$")
-ax.set_ylabel(r"$E(k_x, k_y=0)$")
-# ax.set_xlim(-0.6, 0.6)
-# ax.set_ylim(-0.2, 0.2)
-
-plt.grid()
-plt.tight_layout()
 
 
 #%% Plot pockets in the bilayer

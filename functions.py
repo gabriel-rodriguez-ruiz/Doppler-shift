@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from hamiltonian import get_Hamiltonian
+from hamiltonian import get_Hamiltonian, get_Hamiltonian_in_polars
 
 def get_energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_s, w_S,
                mu_s, mu_S, Delta_s, Delta_S, B_x,
@@ -26,6 +26,32 @@ def get_energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_s, w_S,
                                     E = np.linalg.eigvalsh(H)
                                     for o in range(8):
                                         energies[i, j, p, l, m, n, r, s, o] = E[o]
+    return energies
+
+def get_energy_in_polars(k_values, theta_values, phi_x_values, phi_y_values, w_s, w_S,
+                           mu_s, mu_S, Delta_s, Delta_S, B_x,
+                           B_y, B_x_S, B_y_S, Lambda, w_1,
+                           q_B_x_values, q_B_y_values,
+                           q_x_values, q_y_values):
+    energies = np.zeros((len(k_values), len(theta_values),
+                        len(phi_x_values), len(phi_y_values),
+                        len(q_B_x_values), len(q_B_y_values),
+                        len(q_x_values), len(q_y_values), 8))
+    for i, k in enumerate(k_values):
+        for j, theta in enumerate(theta_values):
+            for p, phi_x in enumerate(phi_x_values):
+                for l, phi_y in enumerate(phi_y_values):
+                    for m, q_x in enumerate(q_x_values):
+                        for n, q_y in enumerate(q_y_values):
+                            for s, q_B_x in enumerate(q_B_x_values):
+                                for r, q_B_y in enumerate(q_B_y_values):
+                                    H = get_Hamiltonian_in_polars(k, theta, phi_x, phi_y, w_s, w_S,
+                                                        mu_s, mu_S, Delta_s, Delta_S, B_x, B_y, B_x_S, B_y_S,
+                                                        Lambda, w_1, q_B_x, q_B_y,
+                                                        q_x, q_y)
+                                    E = np.linalg.eigvalsh(H)
+                                    for o in range(8):
+                                        energies[i, j, p, l, m, n, s, r, o] = E[o]
     return energies
 
 def get_superconducting_density(L_x, L_y, w_s, w_S, mu_s, mu_S, Delta_s, Delta_S, B_x,

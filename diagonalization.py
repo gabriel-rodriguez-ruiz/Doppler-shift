@@ -56,7 +56,8 @@ def get_Energies_in_polars(k_values, theta_values, B_x, B_y, q_B_x, q_B_y, mu, D
     E = np.zeros((len(k_values), len(theta_values), 4))
     for i, k in enumerate(k_values):
         for j, theta in enumerate(theta_values):
-            H = get_Hamiltonian_in_polars(k, theta, B_x, B_y, q_B_x, q_B_y, mu, Delta, phi_x, gamma, Lambda, B_x, phi_y)
+            H = get_Hamiltonian_in_polars(k, theta, B_x, B_y, q_B_x, q_B_y, mu, Delta,
+                                          gamma, Lambda, q_x, q_y, phi_x, phi_y)
             E[i, j, :] = np.linalg.eigvalsh(H)
     return E
 

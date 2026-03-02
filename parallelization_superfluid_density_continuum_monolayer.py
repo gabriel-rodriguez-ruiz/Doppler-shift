@@ -24,14 +24,14 @@ k_F = np.sqrt(E_F / gamma ) # 1/nm
 Delta = 0.08   #  meV
 mu = 50.6   # 623 Delta #50.6  #  meV
 # gamma = 9479 # meV (nm)²
-Lambda = 8.76 #8*Delta # meV*nm    # 8 * Delta  #0.644 meV 
+Lambda = 0#8.76 #8*Delta # meV*nm    # 8 * Delta  #0.644 meV 
 
 cut_off = 1.1*k_F # 1.1 k_F
 
 theta = np.pi/2 #np.pi/2   # float
 B_x = 0
 B_y = 0
-N = 60  #514   #300
+N = 70  #514   #300
 n_cores = 8
 points = 1* n_cores
 n_calls = 15
@@ -76,7 +76,7 @@ def get_minima(search_space, q_B_x, q_B_y):
         acq_func='LCB',  #Lower Confidence Bound (more exploratory) #"EI"  Expected Improvement
         noise=0.0,
         initial_point_generator="lhs",
-        x0=[[-q_B_values[0]], [0.], [q_B_values[0]]]
+        x0=[[0.]]
     )
     return result.x[0]
 
@@ -87,12 +87,12 @@ def integrate_q_B(q_B):
     q_eq = get_minima(search_space, q_B_x, q_B_y)
     phi_x_values = np.array([-h, 0, h]) + q_eq * np.cos(theta + np.pi/2)
     phi_y_values = np.array([-h, 0, h]) + q_eq * np.sin(theta + np.pi/2)
-    superfluid_density_xx = (E_0(phi_x_values[2], phi_y_values[1], q_B_x, q_B_y) - 2*E_0(phi_x_values[1], phi_y_values[1], q_B_x, q_B_y) + E_0(phi_x_values[0], phi_y_values[1], q_B_x, q_B_y))/h**2
-    superfluid_density_xx_0 = (E_0(h, 0, q_B_x, q_B_y) - 2*E_0(0, 0, q_B_x, q_B_y) + E_0(-h, 0, q_B_x, q_B_y))/h**2
-    superfluid_density_yy = (E_0(phi_x_values[1], phi_y_values[2], q_B_x, q_B_y) - 2*E_0(phi_x_values[1], phi_y_values[1], q_B_x, q_B_y) + E_0(phi_x_values[1], phi_y_values[0], q_B_x, q_B_y))/h**2
-    superfluid_density_yy_0 = (E_0(0, h, q_B_x, q_B_y) - 2*E_0(0, 0, q_B_x, q_B_y) + E_0(0, -h, q_B_x, q_B_y))/h**2
-    superfluid_density_xy = (E_0(phi_x_values[2], phi_y_values[2], q_B_x, q_B_y) - E_0(phi_x_values[2], phi_y_values[0], q_B_x, q_B_y) - E_0(phi_x_values[0], phi_y_values[2], q_B_x, q_B_y) + E_0(phi_x_values[0], phi_y_values[0], q_B_x, q_B_y))/(4*h**2)
-    superfluid_density_xy_0 = (E_0(h, h, q_B_x, q_B_y) - E_0(h, -h, q_B_x, q_B_y) - E_0(-h, h, q_B_x, q_B_y) + E_0(-h, -h, q_B_x, q_B_y))/(4*h**2)
+    superfluid_density_xx = (E_0(phi_x_values[2], phi_y_values[1], q_B_x, q_B_y, 0, 0) - 2*E_0(phi_x_values[1], phi_y_values[1], q_B_x, q_B_y, 0, 0) + E_0(phi_x_values[0], phi_y_values[1], q_B_x, q_B_y, 0, 0))/h**2
+    superfluid_density_xx_0 = (E_0(h, 0, q_B_x, q_B_y, 0, 0) - 2*E_0(0, 0, q_B_x, q_B_y, 0, 0) + E_0(-h, 0, q_B_x, q_B_y, 0, 0))/h**2
+    superfluid_density_yy = (E_0(phi_x_values[1], phi_y_values[2], q_B_x, q_B_y, 0, 0) - 2*E_0(phi_x_values[1], phi_y_values[1], q_B_x, q_B_y, 0, 0) + E_0(phi_x_values[1], phi_y_values[0], q_B_x, q_B_y, 0, 0))/h**2
+    superfluid_density_yy_0 = (E_0(0, h, q_B_x, q_B_y, 0, 0) - 2*E_0(0, 0, q_B_x, q_B_y, 0, 0) + E_0(0, -h, q_B_x, q_B_y, 0, 0))/h**2
+    superfluid_density_xy = (E_0(phi_x_values[2], phi_y_values[2], q_B_x, q_B_y, 0, 0) - E_0(phi_x_values[2], phi_y_values[0], q_B_x, q_B_y, 0, 0) - E_0(phi_x_values[0], phi_y_values[2], q_B_x, q_B_y, 0, 0) + E_0(phi_x_values[0], phi_y_values[0], q_B_x, q_B_y, 0, 0))/(4*h**2)
+    superfluid_density_xy_0 = (E_0(h, h, q_B_x, q_B_y, 0, 0) - E_0(h, -h, q_B_x, q_B_y, 0, 0) - E_0(-h, h, q_B_x, q_B_y, 0, 0) + E_0(-h, -h, q_B_x, q_B_y, 0, 0))/(4*h**2)
     return q_eq, superfluid_density_xx, superfluid_density_xx_0, superfluid_density_yy, superfluid_density_yy_0, superfluid_density_xy, superfluid_density_xy_0
 
 if __name__ == "__main__":
