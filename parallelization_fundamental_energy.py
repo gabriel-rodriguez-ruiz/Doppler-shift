@@ -34,13 +34,13 @@ phi_x_values = [0]
 phi_y_values = [0]
 q_x_values = [0]
 q_y_values = [0]
-q_B_x_values = [0.0*np.pi]
+q_B_x_values = [0.01*np.pi]
 q_B_y_values = [0]
 h = 1e-4
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
-n_cores = 8    # odd to include 0
-points = 3*n_cores
+n_cores = 19    # odd to include 0
+points = 1*n_cores
 
 
 params = {"L_x": L_x, "L_y": L_y, "w_s": w_s, "w_S": w_S,
@@ -61,7 +61,7 @@ def integrate_q_x(q_x):
 
 
 if __name__ == "__main__":
-    q_x_values = np.linspace(-0.02*np.pi, 0.02*np.pi, points)
+    q_x_values = np.linspace(-0.01*np.pi, 0.0*np.pi, points)
 
     with multiprocessing.Pool(n_cores) as pool:
         # results_pooled = pool.map(integrate, phi_x_values)
